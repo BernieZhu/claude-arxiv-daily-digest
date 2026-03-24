@@ -24,12 +24,12 @@
     "world action model"
   ],
 
-  "max_papers_per_category": 100,
+  "max_papers_per_day": 100,
 
   "output": {
     "format": "markdown",
     "filename_template": "arxiv_digest_{YYYY}-{MM}-{DD}.md",
-    "output_folder": "~/Documents/arxiv-digests"
+    "output_folder": "."
   },
 
   "author_display": {
