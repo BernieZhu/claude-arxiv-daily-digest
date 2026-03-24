@@ -1,0 +1,62 @@
+{
+  "task_name": "Daily arXiv Paper Digest",
+  "description": "Fetch and summarize the latest arXiv papers based on this config.",
+
+  "mode": "direct",
+  "_mode_options": ["direct", "abstract"],
+  "_mode_descriptions": {
+    "direct": "Fetches the abstract directly from https://arxiv.org/abs/{paper_id} — fast, metadata-only.",
+    "abstract": "Fetches the full HTML page from https://arxiv.org/html/{paper_id} and generates a brief 2-3 sentence summary."
+  },
+
+  "categories": [
+    "cs.AI",
+    "cs.LG",
+    "cs.RO",
+    "cs.CV"
+  ],
+
+  "_available_categories_reference": "https://arxiv.org/category_taxonomy",
+
+  "keywords": [
+    "VLA",
+    "world model",
+    "world action model"
+  ],
+
+  "max_papers_per_category": 100,
+
+  "output": {
+    "format": "markdown",
+    "filename_template": "arxiv_digest_{YYYY}-{MM}-{DD}.md",
+    "output_folder": "~/Documents/arxiv-digests"
+  },
+
+  "author_display": {
+    "max_first": 3,
+    "max_last": 2,
+    "separator": ", ",
+    "ellipsis": "..."
+  },
+
+  "instructions": {
+    "_note": "These instructions tell Claude how to execute the task. Edit them to change behavior without touching the Cowork prompt.",
+
+    "step_1_fetch": "For each category in 'categories', visit https://arxiv.org/list/{category}/new and collect paper IDs (format YYMM.NNNNN) from today's new submissions.",
+
+    "step_2_filter": "From collected papers, keep only those whose title or abstract snippet fuzzy-matches at least one keyword from 'keywords'. Fuzzy matching rules: (1) case-insensitive, (2) match morphological variants (e.g. 'model' matches 'models', 'modeling', 'modelling'), (3) match sub-word/token occurrences (e.g. 'VLA' matches 'VLA-based', 'OpenVLA'), (4) match semantically equivalent phrasings (e.g. 'world model' matches 'world models', 'world-model', 'model of the world'), (5) match common abbreviations and acronyms when the keyword is their expansion or vice versa. Deduplicate papers appearing in multiple categories.",
+
+    "step_3_details": {
+      "direct": "For each matching paper, visit https://arxiv.org/abs/{paper_id}. Extract: title, full author list, and the abstract as-is.",
+      "abstract": "For each matching paper, visit https://arxiv.org/html/{paper_id}. Read the full page and write a brief 2-3 sentence summary in your own words (do NOT copy the abstract verbatim)."
+    },
+
+    "step_4_format_authors": "Format authors using 'author_display' settings: show the first N authors (max_first), then ellipsis, then the last M authors (max_last). If total authors <= max_first + max_last, show all without ellipsis.",
+
+    "step_5_output": "Create a markdown file using 'output.filename_template' and save to 'output.output_folder'. Use this structure per paper:\n\n## {number}. {Paper Title}\n\n**Authors:** {formatted author list}\n**arXiv:** [{paper_id}](https://arxiv.org/abs/{paper_id})\n**Categories:** {paper categories}\n\n{abstract or summary depending on mode}\n\n---",
+
+    "step_6_header": "At the top of the file include:\n\n# arXiv Daily Digest — {date}\n\n**Mode:** {mode}\n**Categories:** {comma-separated categories}\n**Keywords:** {comma-separated keywords}\n**Papers found:** {count}",
+
+    "step_7_report": "After saving, print a short summary: how many papers found, how many matched keywords, the output file path, and a quick preview of the top 5 titles."
+  }
+}

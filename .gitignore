@@ -1,0 +1,24 @@
+# Output digests (generated locally, not committed)
+arxiv_digest_*.md
+examples/arxiv_digest_*.md
+!examples/arxiv_digest_example.md
+
+# macOS
+.DS_Store
+._*
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Linux
+*~
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local config overrides (if user wants a private config)
+arxiv_config.local.json
