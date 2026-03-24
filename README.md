@@ -13,19 +13,16 @@ A configurable daily arXiv paper tracker powered by [Claude Cowork](https://clau
 - [Claude Desktop](https://claude.ai/download) (macOS or Windows)
 - A paid Claude plan (Pro, Max, Team, or Enterprise) with Cowork enabled
 
-### 1. Clone and set up
+### 1. Clone
 
 ```bash
 git clone https://github.com/BernieZhu/claude-arxiv-daily-digest.git
-
-# Create the working directory and copy the config
-mkdir -p ~/Documents/arxiv-daily-digest
-cp claude-arxiv-daily-digest/arxiv_config.json ~/Documents/arxiv-daily-digest/
+cd claude-arxiv-daily-digest
 ```
 
 ### 2. Edit the config
 
-Open `~/Documents/arxiv-daily-digest/arxiv_config.json` and set your `categories`, `keywords`, and `mode`:
+Open `arxiv_config.json` and set your `categories`, `keywords`, and `mode`:
 
 | Mode | What You Get |
 |------|--------------|
@@ -34,7 +31,17 @@ Open `~/Documents/arxiv-daily-digest/arxiv_config.json` and set your `categories
 
 All settings are self-documented in the config file itself (look for `_`-prefixed keys).
 
-### 3. Create the scheduled task in Cowork
+### 3. Run it
+
+**Option A: Run manually with [Claude Code](https://docs.anthropic.com/en/docs/claude-code)**
+
+```bash
+claude "Read arxiv_config.json and follow every step in the instructions object."
+```
+
+Digests are saved to the `markdown/` folder.
+
+**Option B: Schedule with Cowork**
 
 1. Open Claude Desktop → click **Scheduled** in the left sidebar
 2. Click **+ New task**
@@ -42,13 +49,9 @@ All settings are self-documented in the config file itself (look for `_`-prefixe
    - **Name:** `ArXiv Daily Digest`
    - **Prompt:** Copy the contents of [`COWORK_TASK_PROMPT.md`](./COWORK_TASK_PROMPT.md) (it's only 6 lines)
    - **Model:** Claude Opus 4.6 or Sonnet 4.6
-   - **Folder:** `~/Documents/arxiv-daily-digest`
+   - **Folder:** path to this cloned repo
    - **Frequency:** Daily
 4. Click **Save**
-
-### 4. Test it
-
-Click into the task and hit **Run Now**. Check `~/Documents/arxiv-daily-digest/` for your first digest.
 
 ## How It Works
 
@@ -130,8 +133,7 @@ claude-arxiv-daily-digest/
 ├── .gitignore                # Ignores output digests and OS files
 ├── arxiv_config.json         # Self-describing config (settings + instructions)
 ├── COWORK_TASK_PROMPT.md     # Minimal prompt — just reads the config
-└── examples/
-    └── arxiv_digest_example.md   # Sample output
+└── markdown/                 # Output digests go here
 ```
 
 ## Contributing

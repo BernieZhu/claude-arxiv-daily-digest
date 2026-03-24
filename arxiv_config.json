@@ -29,7 +29,7 @@
   "output": {
     "format": "markdown",
     "filename_template": "arxiv_digest_{YYYY}-{MM}-{DD}.md",
-    "output_folder": "."
+    "output_folder": "markdown"
   },
 
   "author_display": {
