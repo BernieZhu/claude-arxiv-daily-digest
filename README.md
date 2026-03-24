@@ -1,17 +1,13 @@
 # claude-arxiv-daily-digest
 
-A configurable daily arXiv paper tracker powered by [Claude Cowork](https://claude.com/product/cowork). Set your categories, keywords, and preferred mode — Claude fetches, filters, and summarizes the latest papers into a clean markdown digest every morning.
+A configurable daily arXiv paper tracker. Set your categories, keywords, and preferred mode — get the latest papers filtered and summarized into a clean markdown digest.
 
 ![Daily](https://img.shields.io/badge/schedule-daily-blue)
 ![Cowork](https://img.shields.io/badge/powered%20by-Claude%20Cowork-orange)
+![Python](https://img.shields.io/badge/python-3.8%2B-blue)
 ![arXiv](https://img.shields.io/badge/source-arXiv.org-b31b1b)
 
 ## Quick Start
-
-### Prerequisites
-
-- [Claude Desktop](https://claude.ai/download) (macOS or Windows)
-- A paid Claude plan (Pro, Max, Team, or Enterprise) with Cowork enabled
 
 ### 1. Clone
 
@@ -33,15 +29,20 @@ All settings are self-documented in the config file itself (look for `_`-prefixe
 
 ### 3. Run it
 
-**Option A: Run manually with [Claude Code](https://docs.anthropic.com/en/docs/claude-code)**
+Two options — pick whichever fits your workflow:
 
-```bash
-claude "Read arxiv_config.json and follow every step in the instructions object."
-```
+---
 
-Digests are saved to the `markdown/` folder.
+#### Option 1: Schedule daily with Claude Cowork
 
-**Option B: Schedule with Cowork**
+Best for hands-free daily digests on your local machine.
+
+**Prerequisites:**
+
+- [Claude Desktop](https://claude.ai/download) (macOS or Windows)
+- A paid Claude plan (Pro, Max, Team, or Enterprise) with Cowork enabled
+
+**Setup:**
 
 1. Open Claude Desktop → click **Scheduled** in the left sidebar
 2. Click **+ New task**
@@ -53,45 +54,38 @@ Digests are saved to the `markdown/` folder.
    - **Frequency:** Daily
 4. Click **Save**
 
-## How It Works
+---
 
+#### Option 2: Run manually with the Python script
+
+Best for backfills, date ranges, or running from a server/cron job.
+
+**Prerequisites:**
+
+- Python 3.8+
+- An [Anthropic API key](https://console.anthropic.com/)
+
+**Installation:**
+
+```bash
+pip install requests beautifulsoup4 anthropic
+export ANTHROPIC_API_KEY=your-key-here
 ```
-┌─────────────────┐     ┌──────────────┐     ┌─────────────────┐
-│  arxiv_config    │────▶│ Claude Cowork │────▶│ arxiv_digest_   │
-│  .json           │     │ (scheduled)   │     │ 202X-XX-XX.md   │
-└─────────────────┘     └──────┬───────┘     └─────────────────┘
-                               │
-                     ┌─────────┴─────────┐
-                     │  arxiv.org/list/   │
-                     │  {category}/new    │
-                     └───────────────────┘
+
+**Usage:**
+
+```bash
+# Today's digest
+python3 arxiv_digest.py
+
+# Specific day
+python3 arxiv_digest.py --start 2026-03-24
+
+# Date range (one markdown file per day)
+python3 arxiv_digest.py --start 2026-03-20 --end 2026-03-24
 ```
 
-1. **Cowork reads** your `arxiv_config.json` — which contains *both* your settings and the execution instructions
-2. **Scans** each category's new submissions on arXiv
-3. **Filters** papers by your keywords
-4. **Fetches** details using your chosen mode (direct abstract or full-page summary)
-5. **Outputs** a dated markdown file to your local machine
-
-### Design: Self-Describing Config
-
-The config file contains an `instructions` object with every step Claude should follow. This means:
-
-- **The Cowork prompt is permanent** — it just says "read the config and follow its instructions"
-- **All changes happen in one file** — edit `arxiv_config.json` to change categories, keywords, mode, output format, or even the execution steps themselves
-- **No prompt/config sync issues** — the config *is* the source of truth
-
-```
-arxiv_config.json
-├── mode, categories, keywords      ← what to fetch
-├── output, author_display          ← how to format
-└── instructions                    ← how to execute (step_1 through step_7)
-        │
-        ▼
-COWORK_TASK_PROMPT.md
-└── "Read arxiv_config.json and follow its instructions."
-    (never needs editing)
-```
+One markdown file per date is saved to the `markdown/` folder.
 
 ## Output Format
 
@@ -132,19 +126,10 @@ claude-arxiv-daily-digest/
 ├── LICENSE                   # MIT License
 ├── .gitignore                # Ignores output digests and OS files
 ├── arxiv_config.json         # Self-describing config (settings + instructions)
-├── COWORK_TASK_PROMPT.md     # Minimal prompt — just reads the config
+├── COWORK_TASK_PROMPT.md     # Minimal Cowork prompt
+├── arxiv_digest.py           # Python script
 └── markdown/                 # Output digests go here
 ```
-
-## Contributing
-
-Contributions welcome! Some ideas:
-
-- Additional output formats (HTML, PDF, RSS)
-- Slack/email notification integration via Cowork connectors
-- Weekly rollup summaries
-- Citation count integration
-- New instruction steps (e.g., `step_8_notify` for Slack alerts)
 
 ## License
 
@@ -152,4 +137,4 @@ Contributions welcome! Some ideas:
 
 ---
 
-Built with [Claude Cowork](https://claude.com/product/cowork) · Papers from [arXiv.org](https://arxiv.org)
+Built with [Claude Cowork](https://claude.com/product/cowork) & [Claude API](https://console.anthropic.com/) · Papers from [arXiv.org](https://arxiv.org)
