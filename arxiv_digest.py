@@ -52,14 +52,6 @@ def get_claude_client():
 # Step 1: Fetch paper listings from arXiv
 # ---------------------------------------------------------------------------
 
-def _parse_date_from_h3(h3_text):
-    """Parse a date string from an h3 heading like 'Tue, 24 Mar 2026 (showing ...)'."""
-    m = re.search(r"(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{4})", h3_text)
-    if m:
-        return datetime.strptime(f"{m.group(1)} {m.group(2)} {m.group(3)}", "%d %b %Y").strftime("%Y-%m-%d")
-    return None
-
-
 def _parse_papers_from_dl(dl_tag, category):
     """Extract papers from a <dl> tag. Returns list of paper dicts."""
     papers = []
@@ -99,26 +91,31 @@ def _parse_papers_from_dl(dl_tag, category):
     return papers
 
 
+def _date_from_arxiv_id(arxiv_id):
+    """Derive YYYY-MM-DD from an arxiv ID like '2603.12345' → '2026-03-12'."""
+    m = re.match(r"(\d{2})(\d{2})\.(\d{2})", arxiv_id)
+    if m:
+        yy, mm, dd = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        return f"20{yy:02d}-{mm:02d}-{dd:02d}"
+    return None
+
+
 def _fetch_papers_by_date(category):
-    """Fetch papers from pastweek listing, grouped by date. Returns {date_str: [papers]}."""
+    """Fetch papers from pastweek listing, grouped by YYYY-MM-DD from arxiv ID.
+    Returns {YYYY-MM-DD: [papers]}."""
     url = ARXIV_LIST_PASTWEEK_URL.format(category)
     print(f"  Fetching {url} ...")
     resp = requests.get(url, timeout=60)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
-    tags = soup.find_all(["dl", "h3"])
     date_papers = {}
-    pending_dl = None
-
-    for tag in tags:
-        if tag.name == "dl":
-            pending_dl = tag
-        elif tag.name == "h3" and pending_dl is not None:
-            date_str = _parse_date_from_h3(tag.get_text())
-            if date_str:
-                date_papers[date_str] = _parse_papers_from_dl(pending_dl, category)
-            pending_dl = None
+    for dl_tag in soup.find_all("dl"):
+        papers = _parse_papers_from_dl(dl_tag, category)
+        for p in papers:
+            date_key = _date_from_arxiv_id(p["id"])
+            if date_key:
+                date_papers.setdefault(date_key, []).append(p)
 
     return date_papers
 
