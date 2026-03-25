@@ -3,7 +3,7 @@
 arxiv_digest.py - Fetch and filter arXiv papers for a date range.
 
 Usage:
-    python3 arxiv_digest.py                      # today
+    python3 arxiv_digest.py                      # yesterday
     python3 arxiv_digest.py --start 2026-03-24   # specific day
     python3 arxiv_digest.py --start 2026-03-20 --end 2026-03-24  # date range
 """
@@ -613,14 +613,35 @@ def process_date(date_str, papers_for_date, config, mode, client):
 
 def main():
     parser = argparse.ArgumentParser(description="arXiv Daily Digest (Python)")
-    parser.add_argument("--start", default=(datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d"),
-                        help="Start date (YYYY-MM-DD), defaults to yesterday")
+    parser.add_argument("--start", help="Start date (YYYY-MM-DD), defaults to yesterday (with weekend logic)")
     parser.add_argument("--end", help="End date (YYYY-MM-DD), defaults to start")
     parser.add_argument("--config", help="Path to config file")
     args = parser.parse_args()
 
     config = load_config(args.config)
     mode = config.get("mode", "direct")
+
+    # arXiv publishes new papers ~8PM ET, Sunday through Thursday.
+    # No new papers on Friday or Saturday.
+    # When no date is specified:
+    #   Friday    → skip (nothing to fetch)
+    #   Saturday  → skip (nothing to fetch)
+    #   Sunday    → fetch Friday and Saturday
+    #   Other days → fetch yesterday
+    if args.start is None:
+        today = datetime.now()
+        weekday = today.weekday()  # 0=Mon, 4=Fri, 5=Sat, 6=Sun
+        if weekday == 4:  # Friday
+            print("Today is Friday — arXiv has no new papers. Nothing to do.")
+            sys.exit(0)
+        elif weekday == 5:  # Saturday
+            print("Today is Saturday — arXiv has no new papers. Nothing to do.")
+            sys.exit(0)
+        elif weekday == 6:  # Sunday
+            args.start = (today - timedelta(days=2)).strftime("%Y-%m-%d")  # Friday
+            args.end = args.end or (today - timedelta(days=1)).strftime("%Y-%m-%d")  # Saturday
+        else:
+            args.start = (today - timedelta(days=1)).strftime("%Y-%m-%d")
     end_date = args.end or args.start
 
     try:
