@@ -53,7 +53,8 @@ def get_claude_client():
 # ---------------------------------------------------------------------------
 
 def _parse_papers_from_dl(dl_tag, category):
-    """Extract papers from a <dl> tag. Returns list of paper dicts."""
+    """Extract papers from a <dl> tag, including cross-listings.
+    Returns list of paper dicts."""
     papers = []
     dts = dl_tag.find_all("dt")
     dds = dl_tag.find_all("dd")
@@ -91,18 +92,21 @@ def _parse_papers_from_dl(dl_tag, category):
     return papers
 
 
-def _date_from_arxiv_id(arxiv_id):
-    """Derive YYYY-MM-DD from an arxiv ID like '2603.12345' → '2026-03-12'."""
-    m = re.match(r"(\d{2})(\d{2})\.(\d{2})", arxiv_id)
-    if m:
-        yy, mm, dd = int(m.group(1)), int(m.group(2)), int(m.group(3))
-        return f"20{yy:02d}-{mm:02d}-{dd:02d}"
-    return None
-
-
 def _fetch_papers_by_date(category):
-    """Fetch papers from pastweek listing, grouped by YYYY-MM-DD from arxiv ID.
-    Returns {YYYY-MM-DD: [papers]}."""
+    """Fetch papers from pastweek listing, grouped by announcement date.
+
+    arXiv paper IDs (YYMM.NNNNN) encode only year and month — the 5 digits
+    after the dot are a sequence number, NOT a day.  We parse the announcement
+    date from the <h3> headings on the pastweek listing page instead.
+
+    Page structure:
+        <h3>Wed, 25 Mar 2026 (showing 48 of 48 entries )</h3>
+        <dl> ... papers announced on that date ... </dl>
+
+    Each date section includes both new submissions and cross-listings.
+
+    Returns {YYYY-MM-DD: [papers]}.
+    """
     url = ARXIV_LIST_PASTWEEK_URL.format(category)
     print(f"  Fetching {url} ...")
     resp = requests.get(url, timeout=60)
@@ -110,12 +114,26 @@ def _fetch_papers_by_date(category):
     soup = BeautifulSoup(resp.text, "html.parser")
 
     date_papers = {}
-    for dl_tag in soup.find_all("dl"):
-        papers = _parse_papers_from_dl(dl_tag, category)
-        for p in papers:
-            date_key = _date_from_arxiv_id(p["id"])
-            if date_key:
-                date_papers.setdefault(date_key, []).append(p)
+
+    # The pastweek page pairs each <h3> date header with a following <dl>.
+    # Headers look like "Wed, 25 Mar 2026 (showing 212 of 212 entries )"
+    h3_tags = soup.find_all("h3")
+    dl_tags = soup.find_all("dl")
+
+    for h3, dl in zip(h3_tags, dl_tags):
+        header_text = h3.get_text().strip()
+        # Strip the parenthetical entry count, e.g. "(showing 212 of 212 entries )"
+        header_text = re.sub(r"\s*\(.*\)\s*$", "", header_text).strip()
+        parsed_date = None
+        for fmt in ("%a, %d %b %Y", "%d %b %Y"):
+            try:
+                parsed_date = datetime.strptime(header_text, fmt).strftime("%Y-%m-%d")
+                break
+            except ValueError:
+                continue
+        if parsed_date:
+            papers = _parse_papers_from_dl(dl, category)
+            date_papers.setdefault(parsed_date, []).extend(papers)
 
     return date_papers
 
@@ -621,26 +639,24 @@ def main():
     config = load_config(args.config)
     mode = config.get("mode", "direct")
 
-    # arXiv publishes new papers ~8PM ET, Sunday through Thursday.
-    # No new papers on Friday or Saturday.
+    # arXiv announces new papers Mon–Fri only (posted ~8PM ET Sun–Thu).
+    # The pastweek listing page only has Mon–Fri announcement dates.
     # When no date is specified:
-    #   Friday    → skip (nothing to fetch)
-    #   Saturday  → skip (nothing to fetch)
-    #   Sunday    → fetch Friday and Saturday
-    #   Other days → fetch yesterday
+    #   Saturday → fetch Friday
+    #   Sun/Mon  → skip (Friday already fetched on Saturday)
+    #   Tue–Fri  → fetch yesterday
     if args.start is None:
         today = datetime.now()
         weekday = today.weekday()  # 0=Mon, 4=Fri, 5=Sat, 6=Sun
-        if weekday == 4:  # Friday
-            print("Today is Friday — arXiv has no new papers. Nothing to do.")
+        if weekday == 6:  # Sunday
+            print("Today is Sunday — no new arXiv announcements. Nothing to do.")
             sys.exit(0)
-        elif weekday == 5:  # Saturday
-            print("Today is Saturday — arXiv has no new papers. Nothing to do.")
+        elif weekday == 0:  # Monday
+            print("Today is Monday — no new arXiv announcements. Nothing to do.")
             sys.exit(0)
-        elif weekday == 6:  # Sunday
-            args.start = (today - timedelta(days=2)).strftime("%Y-%m-%d")  # Friday
-            args.end = args.end or (today - timedelta(days=1)).strftime("%Y-%m-%d")  # Saturday
-        else:
+        elif weekday == 5:  # Saturday → last Friday
+            args.start = (today - timedelta(days=1)).strftime("%Y-%m-%d")
+        else:  # Tue–Fri → yesterday
             args.start = (today - timedelta(days=1)).strftime("%Y-%m-%d")
     end_date = args.end or args.start
 
