@@ -560,10 +560,6 @@ def _print_report(papers, output_path, total_fetched, date_str):
     print(f"  Papers fetched: {total_fetched}")
     print(f"  Papers matched: {len(papers)}")
     print(f"  Output: {output_path}")
-    if papers:
-        print(f"\n  Top {min(5, len(papers))} titles:")
-        for i, p in enumerate(papers[:5], 1):
-            print(f"    {i}. {p.get('title', '?')[:80]}")
     print(f"{'='*60}\n")
 
 
@@ -620,8 +616,8 @@ def process_date(date_str, papers_for_date, config, mode, client):
 
 def main():
     parser = argparse.ArgumentParser(description="arXiv Daily Digest (Python)")
-    parser.add_argument("--start", default=datetime.now().strftime("%Y-%m-%d"),
-                        help="Start date (YYYY-MM-DD), defaults to today")
+    parser.add_argument("--start", default=(datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d"),
+                        help="Start date (YYYY-MM-DD), defaults to yesterday")
     parser.add_argument("--end", help="End date (YYYY-MM-DD), defaults to start")
     parser.add_argument("--config", help="Path to config file")
     args = parser.parse_args()

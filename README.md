@@ -75,7 +75,7 @@ export ANTHROPIC_API_KEY=your-key-here
 **Usage:**
 
 ```bash
-# Today's digest
+# Yesterday's digest (default)
 python3 arxiv_digest.py
 
 # Specific day

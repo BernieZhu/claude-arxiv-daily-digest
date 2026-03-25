@@ -48,7 +48,7 @@
   "instructions": {
     "_note": "These instructions tell Claude how to execute the task. Edit them to change behavior without touching the Cowork prompt.",
 
-    "step_1_fetch": "For each category in 'categories', visit https://arxiv.org/list/{category}/new and collect paper IDs (format YYMM.NNNNN) from today's new submissions.",
+    "step_1_fetch": "For each category in 'categories', visit https://arxiv.org/list/{category}/new and collect paper IDs (format YYMM.NNNNN) from yesterday's submissions (not today). If a specific date is provided, use that date instead. The output filename date must match the paper date, not today's date.",
 
     "step_2_filter": "From collected papers, keep only those whose title or abstract snippet fuzzy-matches at least one keyword from 'keywords'. Fuzzy matching rules: (1) case-insensitive, (2) match morphological variants (e.g. 'model' matches 'models', 'modeling', 'modelling'), (3) match sub-word/token occurrences (e.g. 'VLA' matches 'VLA-based', 'OpenVLA'), (4) match semantically equivalent phrasings (e.g. 'world model' matches 'world models', 'world-model', 'model of the world'), (5) match common abbreviations and acronyms when the keyword is their expansion or vice versa. Deduplicate papers appearing in multiple categories.",
 
@@ -63,6 +63,6 @@
 
     "step_6_header": "At the top of the file include:\n\n# arXiv Daily Digest — {date}\n\n**Mode:** {mode}\n**Categories:** {comma-separated categories}\n**Keywords:** {comma-separated keywords}\n**Papers found:** {count}",
 
-    "step_7_report": "After saving, print a short summary: how many papers found, how many matched keywords, the output file path, and a quick preview of the top 5 titles."
+    "step_7_report": "After saving, print a short summary: how many papers found, how many matched keywords, and the output file path."
   }
 }
