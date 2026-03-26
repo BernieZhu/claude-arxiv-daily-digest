@@ -1,5 +1,5 @@
 # Output digests (generated locally, not committed)
-*arxiv_digest_*.md
+# Note: markdown/ is NOT ignored so GitHub Actions can commit results
 examples/arxiv_digest_*.md
 !examples/arxiv_digest_example.md
 

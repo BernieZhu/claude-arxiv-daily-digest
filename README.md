@@ -29,11 +29,33 @@ All settings are self-documented in the config file itself (look for `_`-prefixe
 
 ### 3. Run it
 
-Two options — pick whichever fits your workflow:
+Three options — pick whichever fits your workflow:
 
 ---
 
-#### Option 1: Schedule daily with Claude Cowork
+#### Option 1: Automate with GitHub Actions
+
+Best for fully automated daily digests without a local machine.
+
+**Prerequisites:**
+
+- This repo pushed to GitHub
+- An [Anthropic API key](https://console.anthropic.com/)
+
+**Setup:**
+
+1. Go to your repo on GitHub → **Settings** → **Secrets and variables** → **Actions**
+2. Click **New repository secret**
+   - **Name:** `ANTHROPIC_API_KEY`
+   - **Secret:** your Anthropic API key
+3. Go to **Settings** → **Actions** → **General** → scroll to **Workflow permissions** → select **Read and write permissions** → Save
+4. That's it — the workflow runs daily at 8:00 AM UTC and commits results to `markdown/`
+
+You can also trigger it manually from the **Actions** tab → **Daily arXiv Digest** → **Run workflow**.
+
+---
+
+#### Option 2: Schedule daily with Claude Cowork
 
 Best for hands-free daily digests on your local machine.
 
@@ -56,7 +78,7 @@ Best for hands-free daily digests on your local machine.
 
 ---
 
-#### Option 2: Run manually with the Python script
+#### Option 3: Run manually with the Python script
 
 Best for backfills, date ranges, or running from a server/cron job.
 
@@ -128,6 +150,9 @@ claude-arxiv-daily-digest/
 ├── arxiv_config.json         # Self-describing config (settings + instructions)
 ├── COWORK_TASK_PROMPT.md     # Minimal Cowork prompt
 ├── arxiv_digest.py           # Python script
+├── requirements.txt          # Python dependencies
+├── .github/workflows/
+│   └── daily_digest.yml      # GitHub Actions workflow
 └── markdown/                 # Output digests go here
 ```
 
