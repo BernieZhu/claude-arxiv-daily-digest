@@ -22,10 +22,8 @@ Open `arxiv_config.json` and set your `categories`, `keywords`, and `mode`:
 
 | Mode | What You Get |
 |------|--------------|
-| `direct` | The original abstract as-is — fast and precise |
+| `direct` | The original abstract as-is — fast and precise, saving tokens |
 | `abstract` | A brief 2–3 sentence AI-generated summary — richer context |
-
-All settings are self-documented in the config file itself (look for `_`-prefixed keys).
 
 ### 3. Run it
 
@@ -35,12 +33,7 @@ Three options — pick whichever fits your workflow:
 
 #### Option 1: Automate with GitHub Actions
 
-Best for fully automated daily digests without a local machine.
-
-**Prerequisites:**
-
-- This repo pushed to GitHub
-- An [Anthropic API key](https://console.anthropic.com/)
+Best for fully automated daily digests WITHOUT a local machine.
 
 **Setup:**
 
@@ -49,7 +42,7 @@ Best for fully automated daily digests without a local machine.
    - **Name:** `ANTHROPIC_API_KEY`
    - **Secret:** your Anthropic API key
 3. Go to **Settings** → **Actions** → **General** → scroll to **Workflow permissions** → select **Read and write permissions** → Save
-4. That's it — the workflow runs daily at 8:00 AM UTC and commits results to `markdown/`
+4. That's it — the workflow runs daily at 9:00 AM PDT and commits results to `markdown/`
 
 You can also trigger it manually from the **Actions** tab → **Daily arXiv Digest** → **Run workflow**.
 
@@ -59,21 +52,23 @@ You can also trigger it manually from the **Actions** tab → **Daily arXiv Dige
 
 Best for hands-free daily digests on your local machine.
 
+Why not use the [Claude Code schedule tasks on the web](https://code.claude.com/docs/en/web-scheduled-tasks)? Because arXiv is not directly accessible from Claude Code's remote agent environment.
+
 **Prerequisites:**
 
-- [Claude Desktop](https://claude.ai/download) (macOS or Windows)
-- A paid Claude plan (Pro, Max, Team, or Enterprise) with Cowork enabled
+- A paid Claude plan with Cowork enabled
+- [Claude Desktop](https://claude.ai/download)
 
 **Setup:**
 
-1. Open Claude Desktop → click **Scheduled** in the left sidebar
+1. Open Claude Desktop → cowork tab → click **Scheduled** in the left sidebar
 2. Click **+ New task**
 3. Fill in:
    - **Name:** `ArXiv Daily Digest`
    - **Prompt:** Copy the contents of [`COWORK_TASK_PROMPT.md`](./COWORK_TASK_PROMPT.md) (it's only 6 lines)
    - **Model:** Claude Opus 4.6 or Sonnet 4.6
    - **Folder:** path to this cloned repo
-   - **Frequency:** Daily
+   - **Frequency:** Daily 09:00 AM
 4. Click **Save**
 
 ---
@@ -82,15 +77,10 @@ Best for hands-free daily digests on your local machine.
 
 Best for backfills, date ranges, or running from a server/cron job.
 
-**Prerequisites:**
-
-- Python 3.8+
-- An [Anthropic API key](https://console.anthropic.com/)
-
 **Installation:**
 
 ```bash
-pip install requests beautifulsoup4 anthropic
+pip install -r requirements.txt
 export ANTHROPIC_API_KEY=your-key-here
 ```
 
@@ -136,7 +126,7 @@ The dominant sequence transduction models are based on complex recurrent or conv
 
 ## Scheduling Tips
 
-- **arXiv publishes new papers ~8:00 PM ET, Sunday through Thursday.** Schedule your task for the following morning (e.g., 7:00 AM local time) to catch everything.
+- **arXiv publishes new papers ~8:00 PM ET, Sunday through Thursday.** Schedule your task for the following morning to catch everything.
 - Your computer must be **awake** and Claude Desktop must be **open** for the task to run. Missed runs execute automatically on the next wake.
 - The `abstract` mode uses more tokens than `direct` since it reads full HTML pages. If you're watching usage limits, start with `direct`.
 
