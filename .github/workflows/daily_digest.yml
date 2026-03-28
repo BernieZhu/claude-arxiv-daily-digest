@@ -2,7 +2,7 @@ name: Daily arXiv Digest
 
 on:
   schedule:
-    # 8:00 AM US Pacific Time (3 PM UTC; during PST this runs at 7 AM PT)
+    # 9:00 AM US Pacific Time (4 PM UTC; during PST this runs at 8 AM PT)
     - cron: '0 15 * * *'
   workflow_dispatch: # allow manual trigger
 

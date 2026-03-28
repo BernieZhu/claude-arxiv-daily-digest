@@ -31,6 +31,20 @@ ARXIV_LIST_PASTWEEK_URL = "https://arxiv.org/list/{}/pastweek?show=2000"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(SCRIPT_DIR, "arxiv_config.json")
 
+def _claude_create_with_retry(client, max_retries=5, **kwargs):
+    """Call client.messages.create with exponential backoff on 529 overloaded errors."""
+    for attempt in range(max_retries):
+        try:
+            return client.messages.create(**kwargs)
+        except anthropic.APIStatusError as e:
+            if e.status_code == 529 and attempt < max_retries - 1:
+                wait = 2 ** attempt * 10  # 10s, 20s, 40s, 80s
+                print(f"  API overloaded (529), retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
+                time.sleep(wait)
+            else:
+                raise
+
+
 def load_config(path=None):
     with open(path or CONFIG_PATH) as f:
         return json.load(f)
@@ -311,7 +325,8 @@ Format: [{{"index": 0, "keyword": "matched keyword"}}]
 If no papers match, respond with exactly: []"""
 
         print(f"  Asking Claude to verify batch {batch_start // batch_size + 1} ({len(batch)} papers)...")
-        response = client.messages.create(
+        response = _claude_create_with_retry(
+            client,
             model="claude-sonnet-4-20250514",
             max_tokens=2048,
             system="You are a JSON-only filter. Output raw JSON arrays only. Never explain your reasoning. Never use markdown code fences.",
@@ -377,7 +392,8 @@ Titles:
 Respond with ONLY a JSON array of integers, e.g. [0, 3, 7]. If none match, respond with: []"""
 
         print(f"  Claude title scan batch {batch_start // batch_size + 1} ({len(batch)} titles)...")
-        response = client.messages.create(
+        response = _claude_create_with_retry(
+            client,
             model="claude-sonnet-4-20250514",
             max_tokens=2048,
             system="You are a JSON-only filter. Output raw JSON arrays only. Never explain your reasoning.",
@@ -485,7 +501,8 @@ Content:
 Return ONLY the 2-3 sentence summary."""
 
     print(f"    Summarizing {paper['id']}...")
-    response = client.messages.create(
+    response = _claude_create_with_retry(
+        client,
         model="claude-sonnet-4-20250514",
         max_tokens=512,
         messages=[{"role": "user", "content": prompt}],
