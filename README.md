@@ -44,7 +44,9 @@ Best for fully automated daily digests WITHOUT a local machine.
 3. Go to **Settings** → **Actions** → **General** → scroll to **Workflow permissions** → select **Read and write permissions** → Save
 4. That's it — the workflow runs daily at 9:00 AM PDT and commits results to `markdown/`
 
-You can also trigger it manually from the **Actions** tab → **Daily arXiv Digest** → **Run workflow**.
+You can also trigger it manually from the **Actions** tab → **Daily arXiv Digest** → **Run workflow**.  
+
+It uses Claude Sonnet 4.6 API and typically costs ~$0.20 per day.
 
 ---
 

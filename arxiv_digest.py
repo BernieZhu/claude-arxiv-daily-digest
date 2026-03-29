@@ -327,7 +327,7 @@ If no papers match, respond with exactly: []"""
         print(f"  Asking Claude to verify batch {batch_start // batch_size + 1} ({len(batch)} papers)...")
         response = _claude_create_with_retry(
             client,
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-6",
             max_tokens=2048,
             system="You are a JSON-only filter. Output raw JSON arrays only. Never explain your reasoning. Never use markdown code fences.",
             messages=[{"role": "user", "content": prompt}],
@@ -394,7 +394,7 @@ Respond with ONLY a JSON array of integers, e.g. [0, 3, 7]. If none match, respo
         print(f"  Claude title scan batch {batch_start // batch_size + 1} ({len(batch)} titles)...")
         response = _claude_create_with_retry(
             client,
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-6",
             max_tokens=2048,
             system="You are a JSON-only filter. Output raw JSON arrays only. Never explain your reasoning.",
             messages=[{"role": "user", "content": prompt}],
@@ -503,7 +503,7 @@ Return ONLY the 2-3 sentence summary."""
     print(f"    Summarizing {paper['id']}...")
     response = _claude_create_with_retry(
         client,
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-6",
         max_tokens=512,
         messages=[{"role": "user", "content": prompt}],
     )
