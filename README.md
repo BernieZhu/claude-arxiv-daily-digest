@@ -46,7 +46,7 @@ Best for fully automated daily digests WITHOUT a local machine.
 
 You can also trigger it manually from the **Actions** tab → **Daily arXiv Digest** → **Run workflow**.  
 
-It uses Claude Sonnet 4.6 API and typically costs ~$0.20 per day.
+It uses Claude Sonnet 4.6 API and typically costs under $0.10 per day in `direct` mode.
 
 ---
 

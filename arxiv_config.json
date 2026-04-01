@@ -5,7 +5,7 @@
   "mode": "direct",
   "_mode_options": ["direct", "abstract"],
   "_mode_descriptions": {
-    "direct": "Fetches the abstract directly from https://arxiv.org/abs/{paper_id} — fast, metadata-only.",
+    "direct": "Fetches the abstract directly from https://arxiv.org/abs/{paper_id}",
     "abstract": "Fetches the full HTML page from https://arxiv.org/html/{paper_id} and generates a brief 2-3 sentence summary."
   },
 
