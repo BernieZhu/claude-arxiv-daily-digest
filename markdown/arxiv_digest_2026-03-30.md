@@ -3,7 +3,7 @@
 **Mode:** direct
 **Categories:** cs.AI, cs.LG, cs.RO, cs.CV
 **Keywords:** VLA, world model, world action model
-**Papers found:** 7
+**Papers found:** 8
 
 ---
 
@@ -37,17 +37,7 @@ The integration of Vision-Language-Action (VLA) models into autonomous driving s
 
 ---
 
-## 4. A Neural Score-Based Particle Method for the Vlasov-Maxwell-Landau System
-
-**Authors:** Vasily Ilin, Jingwei Hu
-**arXiv:** [2603.25832](https://arxiv.org/abs/2603.25832)
-**Categories:** Numerical Analysis (math.NA); Machine Learning (cs.LG); Analysis of PDEs (math.AP)
-
-Plasma modeling is central to the design of nuclear fusion reactors, yet simulating collisional plasma kinetics from first principles remains a formidable computational challenge: the Vlasov-Maxwell-Landau (VML) system describes six-dimensional phase-space transport under self-consistent electromagnetic fields together with the nonlinear, nonlocal Landau collision operator. A recent deterministic particle method for the full VML system estimates the velocity score function via the blob method, a kernel-based approximation with $O(n^2)$ cost. In this work, we replace the blob score estimator with score-based transport modeling (SBTM), in which a neural network is trained on-the-fly via implicit score matching at $O(n)$ cost. We prove that the approximated collision operator preserves momentum and kinetic energy, and dissipates an estimated entropy. We also characterize the unique global steady state of the VML system and its electrostatic reduction, providing the ground truth for numerical validation. On three canonical benchmarks -- Landau damping, two-stream instability, and Weibel instability -- SBTM is more accurate than the blob method, achieves correct long-time relaxation to Maxwellian equilibrium where the blob method fails, and delivers $50\%$ faster runtime with $4\times$ lower peak memory.
-
----
-
-## 5. VLA-OPD: Bridging Offline SFT and Online RL for Vision-Language-Action Models via On-Policy Distillation
+## 4. VLA-OPD: Bridging Offline SFT and Online RL for Vision-Language-Action Models via On-Policy Distillation
 
 **Authors:** Zhide Zhong, Haodong Yan, Junfeng Li, ..., Tianran Zhang, Haoang Li
 **arXiv:** [2603.26666](https://arxiv.org/abs/2603.26666)
@@ -57,7 +47,7 @@ Although pre-trained Vision-Language-Action (VLA) models exhibit impressive gene
 
 ---
 
-## 6. Realtime-VLA V2: Learning to Run VLAs Fast, Smooth, and Accurate
+## 5. Realtime-VLA V2: Learning to Run VLAs Fast, Smooth, and Accurate
 
 **Authors:** Chen Yang, Yucheng Hu, Yunchao Ma, ..., Jing Tan, Haoqiang Fan
 **arXiv:** [2603.26360](https://arxiv.org/abs/2603.26360)
@@ -67,12 +57,32 @@ In deployment of the VLA models to real-world robotic tasks, execution speed mat
 
 ---
 
-## 7. DFM-VLA: Iterative Action Refinement for Robot Manipulation via Discrete Flow Matching
+## 6. DFM-VLA: Iterative Action Refinement for Robot Manipulation via Discrete Flow Matching
 
 **Authors:** Jiayi Chen, Wenxuan Song, Shuai Chen, ..., Zhijun Li, Haoang Li
 **arXiv:** [2603.26320](https://arxiv.org/abs/2603.26320)
 **Categories:** Robotics (cs.RO); Computer Vision and Pattern Recognition (cs.CV)
 
-Vision--Language--Action (VLA) models that encode actions using a discrete tokenization scheme are increasingly adopted for robotic manipulation, but existing decoding paradigms remain fundamentally limited. Whether actions are decoded sequentially by autoregressive VLAs or in parallel by discrete diffusion VLAs, once a token is generated, it is typically fixed and cannot be revised in subsequent iterations, so early token errors cannot be effectively corrected later. We propose DFM-VLA, a discrete flow matching VLA for iterative refinement of action tokens. DFM-VLA~models a token-level probability velocity field that dynamically updates the full action sequence across refinement iterations. We investigate two ways to construct the velocity field: an auxiliary velocity-head formulation and an action-embedding-guided formulation. Our framework further adopts a two-stage decoding strategy with an iterative refinement stage followed by deterministic validation for stable convergence. Extensive experiments on CALVIN, LIBERO, and real-world manipulation tasks show that DFM-VLA consistently outperforms strong autoregressive, discrete diffusion, and continuous diffusion baselines in manipulation performance while retaining high inference efficiency. In particular, DFM-VLA achieves an average success length of 4.44 on CALVIN and an average success rate of 95.7\% on LIBERO, highlighting the value of action refinement via discrete flow matching for robotic manipulation. Our project is available \url{this https URL}
+Vision--Language--Action (VLA) models that encode actions using a discrete tokenization scheme are increasingly adopted for robotic manipulation, but existing decoding paradigms remain fundamentally limited. Whether actions are decoded sequentially by autoregressive VLAs or in parallel by discrete diffusion VLAs, once a token is generated, it is typically fixed and cannot be revised in subsequent iterations, so early token errors cannot be effectively corrected later. We propose DFM-VLA, a discrete flow matching VLA for iterative refinement of action tokens. DFM-VLA~models a token-level probability velocity field that dynamically updates the full action sequence across refinement iterations. We investigate two ways to construct the velocity field: an auxiliary velocity-head formulation and an action-embedding-guided formulation. Our framework further adopts a two-stage decoding strategy with an iterative refinement stage followed by deterministic validation for stable convergence. Extensive experiments on CALVIN, LIBERO, and real-world manipulation tasks show that DFM-VLA consistently outperforms strong autoregressive, discrete diffusion, and continuous diffusion baselines in manipulation performance while retaining high inference efficiency. In particular, DFM-VLA achieves an average success length of 4.44 on CALVIN and an average success rate of 95.7\% on LIBERO, highlighting the value of action refinement via discrete flow matching for robotic manipulation. Our project is available this https URL
+
+---
+
+## 7. DiffusionAnything: End-to-End In-context Diffusion Learning for Unified Navigation and Pre-Grasp Motion
+
+**Authors:** Iana Zhura, Yara Mahmoud, Jeffrin Sam, ..., Miguel Altamirano Cabrera, Dzmitry Tsetserukou
+**arXiv:** [2603.26322](https://arxiv.org/abs/2603.26322)
+**Categories:** Robotics (cs.RO)
+
+Efficiently predicting motion plans directly from vision remains a fundamental challenge in robotics, where planning typically requires explicit goal specification and task-specific design. Recent vision-language-action (VLA) models infer actions directly from visual input but demand massive computational resources, extensive training data, and fail zero-shot in novel scenes. We present a unified image-space diffusion policy handling both meter-scale navigation and centimeter-scale manipulation via multi-scale feature modulation, with only 5 minutes of self-supervised data per task. Three key innovations drive the framework: (1) Multi-scale FiLM conditioning on task mode, depth scale, and spatial attention enables task-appropriate behavior in a single model; (2) trajectory-aligned depth prediction focuses metric 3D reasoning along generated waypoints; (3) self-supervised attention from AnyTraverse enables goal-directed inference without vision-language models and depth sensors. Operating purely from RGB input (2.0 GB memory, 10 Hz), the model achieves robust zero-shot generalization to novel scenes while remaining suitable for onboard deployment.
+
+---
+
+## 8. World Reasoning Arena
+
+**Authors:** PAN Team Institute of Foundation Models, Qiyue Gao, Kun Zhou, ..., Zhengzhong Liu, Eric Xing
+**arXiv:** [2603.25887](https://arxiv.org/abs/2603.25887)
+**Categories:** Computer Vision and Pattern Recognition (cs.CV)
+
+World models (WMs) are intended to serve as internal simulators of the real world that enable agents to understand, anticipate, and act upon complex environments. Existing WM benchmarks remain narrowly focused on next-state prediction and visual fidelity, overlooking the richer simulation capabilities required for intelligent behavior. To address this gap, we introduce WR-Arena, a comprehensive benchmark for evaluating WMs along three fundamental dimensions of next world simulation: (i) Action Simulation Fidelity, the ability to interpret and follow semantically meaningful, multi-step instructions and generate diverse counterfactual rollouts; (ii) Long-horizon Forecast, the ability to sustain accurate, coherent, and physically plausible simulations across extended interactions; and (iii) Simulative Reasoning and Planning, the ability to support goal-directed reasoning by simulating, comparing, and selecting among alternative futures in both structured and open-ended environments. We build a task taxonomy and curate diverse datasets designed to probe these capabilities, moving beyond single-turn and perceptual evaluations. Through extensive experiments with state-of-the-art WMs, our results expose a substantial gap between current models and human-level hypothetical reasoning, and establish WR-Arena as both a diagnostic tool and a guideline for advancing next-generation world models capable of robust understanding, forecasting, and purposeful action. The code is available at this https URL.
 
 ---

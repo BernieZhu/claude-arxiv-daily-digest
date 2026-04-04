@@ -3,21 +3,11 @@
 **Mode:** direct
 **Categories:** cs.AI, cs.LG, cs.RO, cs.CV
 **Keywords:** VLA, world model, world action model
-**Papers found:** 3
+**Papers found:** 2
 
 ---
 
-## 1. MVNN: A Measure-Valued Neural Network for Learning McKean-Vlasov Dynamics from Particle Data
-
-**Authors:** Liyao Lyu, Xinyue Yu, Hayden Schaeffer
-**arXiv:** [2604.00333](https://arxiv.org/abs/2604.00333)
-**Categories:** Numerical Analysis (math.NA); Machine Learning (cs.LG); Computational Physics (physics.comp-ph)
-
-Collective behaviors that emerge from interactions are fundamental to numerous biological systems. To learn such interacting forces from observations, we introduce a measure-valued neural network that infers measure-dependent interaction (drift) terms directly from particle-trajectory observations. The proposed architecture generalizes standard neural networks to operate on probability measures by learning cylindrical features, using an embedding network that produces scalable distribution-to-vector representations. On the theory side, we establish well-posedness of the resulting dynamics and prove propagation-of-chaos for the associated interacting-particle system. We further show universal approximation and quantitative approximation rates under a low-dimensional measure-dependence assumption. Numerical experiments on first and second order systems, including deterministic and stochastic Motsch-Tadmor dynamics, two-dimensional attraction-repulsion aggregation, Cucker-Smale dynamics, and a hierarchical multi-group system, demonstrate accurate prediction and strong out-of-distribution generalization.
-
----
-
-## 2. DLWM: Dual Latent World Models enable Holistic Gaussian-centric Pre-training in Autonomous Driving
+## 1. DLWM: Dual Latent World Models enable Holistic Gaussian-centric Pre-training in Autonomous Driving
 
 **Authors:** Yiyao Zhu, Ying Xue, Haiming Zhang, ..., Zhen Li, Shaojie Shen
 **arXiv:** [2604.00969](https://arxiv.org/abs/2604.00969)
@@ -27,7 +17,7 @@ Vision-based autonomous driving has gained much attention due to its low costs a
 
 ---
 
-## 3. DVGT-2: Vision-Geometry-Action Model for Autonomous Driving at Scale
+## 2. DVGT-2: Vision-Geometry-Action Model for Autonomous Driving at Scale
 
 **Authors:** Sicheng Zuo, Zixun Xie, Wenzhao Zheng, ..., Zhi-Xin Yang, Jiwen Lu
 **arXiv:** [2604.00813](https://arxiv.org/abs/2604.00813)

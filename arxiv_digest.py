@@ -203,16 +203,28 @@ def _make_keyword_pattern(keyword):
     return re.compile(r"[\s\-]?".join(word_patterns), re.IGNORECASE)
 
 
+def _is_uppercase_abbrev(kw):
+    """True if keyword is an all-caps abbreviation (2+ uppercase letters, optionally with digits)."""
+    return bool(re.match(r'^[A-Z][A-Z0-9]+$', kw))
+
+
 def _text_matches_keywords(text, keywords, acronym_expansions=None):
     """Check if text fuzzy-matches any keyword.
-    Checks: substring, regex morphological variants, acronym expansions."""
+    Checks: substring, regex morphological variants, acronym expansions.
+    All-uppercase keywords (e.g. VLA) are matched case-sensitively to avoid
+    false positives like 'Vlasov' matching 'VLA'."""
     normalized = _normalize(text)
     expansions = acronym_expansions or {}
     for kw in keywords:
-        if _normalize(kw) in normalized:
-            return True
-        if _make_keyword_pattern(kw).search(normalized):
-            return True
+        if _is_uppercase_abbrev(kw):
+            # Case-sensitive substring check on original text — 'VLA' won't match 'Vlasov'
+            if kw in text:
+                return True
+        else:
+            if _normalize(kw) in normalized:
+                return True
+            if _make_keyword_pattern(kw).search(normalized):
+                return True
         for expansion in expansions.get(kw.upper(), []):
             if _normalize(expansion) in normalized:
                 return True
